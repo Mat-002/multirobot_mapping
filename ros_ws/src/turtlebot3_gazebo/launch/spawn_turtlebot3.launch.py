@@ -59,7 +59,7 @@ def generate_launch_description():
     )
 
     bridge_params = os.path.join(
-        get_package_share_directory('turtlebot3_gazebo'),
+        get_package_share_directory('multirobot_mapping'),
         'params',
         model_folder+'_bridge.yaml'
     )
@@ -78,7 +78,7 @@ def generate_launch_description():
     start_gazebo_ros_image_bridge_cmd = Node(
         package='ros_gz_image',
         executable='image_bridge',
-        arguments=['/camera/image_raw'],
+        arguments=['/stereo_camera'],
         output='screen',
     )
     ld = LaunchDescription()
