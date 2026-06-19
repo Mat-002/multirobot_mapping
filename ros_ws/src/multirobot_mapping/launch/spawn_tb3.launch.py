@@ -3,8 +3,10 @@ import sys
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, GroupAction, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import PushRosNamespace
 from launch_ros.actions import Node
 
 # 1. Trova il percorso assoluto della cartella in cui si trova QUESTO file di launch
@@ -77,6 +79,19 @@ def generate_launch_description():
             output='screen',
         ) 
 
+        robot_state_publisher = GroupAction([
+            PushRosNamespace(namespace),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(get_package_share_directory('multirobot_mapping'), 'launch', 'publisher_tb3.launch.py')
+                ),
+                launch_arguments={
+                    'use_sim_time': 'true',
+                    'frame_prefix': namespace
+                }.items()
+            )
+        ])
+
         gazebo_ros_bridge = Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
@@ -96,7 +111,7 @@ def generate_launch_description():
             output='screen',
         )
 
-        return [gazebo_ros_spawner, gazebo_ros_bridge, gazebo_ros_image_bridge]
+        return [gazebo_ros_spawner, gazebo_ros_bridge, gazebo_ros_image_bridge, robot_state_publisher]
 
     ld = LaunchDescription()
 

@@ -34,7 +34,7 @@ def create_namespaced_bridge_yaml(base_yaml_path, namespace):
 
     namespaced_bridges = []
     for bridge in bridges:
-        if bridge['ros_topic_name'] not in ['clock']:
+        if bridge['ros_topic_name'] not in ['clock', 'tf','tf_static']:
             bridge['ros_topic_name'] = f"{namespace_with_slash}{bridge['ros_topic_name']}"
         if bridge['gz_topic_name'] not in ['clock']:
             bridge['gz_topic_name'] = f"{namespace_with_slash}{bridge['gz_topic_name']}"
@@ -74,7 +74,11 @@ def load_sdf_with_namespace(model_path, namespace):
         '<topic>imu</topic>': f'<topic>{namespace}/imu</topic>',
         '<topic>scan</topic>': f'<topic>{namespace}/scan</topic>',
         '<topic>stereo_camera</topic>': f'<topic>{namespace}/stereo_camera</topic>',    #MODIFICATO
-        '<camera_info_topic>stereo_camera/camera_info</camera_info_topic>': f'<camera_info_topic>{namespace}/stereo_camera/camera_info</camera_info_topic>',    #MODIFICATO 
+        '<camera_info_topic>stereo_camera/camera_info</camera_info_topic>': f'<camera_info_topic>{namespace}/stereo_camera/camera_info</camera_info_topic>',    #MODIFICATO
+        # --- AGGIUNGI QUESTE RIGHE PER CORREGGERE I FRAME DEL PLUGIN DIFF-DRIVE ---
+        '<frame_id>odom</frame_id>': f'<frame_id>{namespace}/odom</frame_id>',
+        '<child_frame_id>base_footprint</child_frame_id>': f'<child_frame_id>{namespace}/base_footprint</child_frame_id>',
+        '<gz_frame_id>camera_rgb_frame</gz_frame_id>': f'<gz_frame_id>{namespace}/camera_rgb_frame</gz_frame_id>'
     }
 
     for original, replacement in topic_map.items():

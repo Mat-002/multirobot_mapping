@@ -17,9 +17,17 @@ def generate_launch_description():
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    x_pose_r1 = LaunchConfiguration('x_pose_r1', default='-2.0')
-    y_pose_r1 = LaunchConfiguration('y_pose_r1', default='-0.5')
+    x_pose_r1 = LaunchConfiguration('x_pose_r1', default='2.0')
+    y_pose_r1 = LaunchConfiguration('y_pose_r1', default='0.0')
     ns_r1 = LaunchConfiguration('ns_r1', default='robot1')
+
+    x_pose_r2 = LaunchConfiguration('x_pose_r2', default='1.0')
+    y_pose_r2 = LaunchConfiguration('y_pose_r2', default='0.5')
+    ns_r2 = LaunchConfiguration('ns_r2', default='robot2')
+
+    x_pose_r3 = LaunchConfiguration('x_pose_r3', default='-2.0')
+    y_pose_r3 = LaunchConfiguration('y_pose_r3', default='-0.5')
+    ns_r3 = LaunchConfiguration('ns_r3', default='robot3')
 
     world = os.path.join(
         get_package_share_directory('turtlebot3_gazebo'),
@@ -42,23 +50,7 @@ def generate_launch_description():
 
 
                                 # ROBOT1
-    # ROBOT1 (Avvolto nel Namespace)
-    robot1_group = GroupAction([
-        # Questa è la magia: tutti i nodi lanciati dentro questo gruppo 
-        # verranno automaticamente inseriti nel namespace 'robot1'
-        PushRosNamespace(ns_r1),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(launch_file_dir, 'publisher_tb3.launch.py')
-            ),
-            launch_arguments={
-                'use_sim_time': use_sim_time,
-                'frame_prefix': ns_r1
-            }.items()
-        ),
-
-        IncludeLaunchDescription(
+    robot1_spawn_cmd = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(launch_file_dir, 'spawn_tb3.launch.py')
             ),
@@ -68,30 +60,28 @@ def generate_launch_description():
                 'namespace': ns_r1
             }.items()
         )
-    ])
-
-    # robot_state_publisher1_cmd = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         os.path.join(launch_file_dir, 'publisher_tb3.launch.py')
-    #     ),
-    #     launch_arguments={
-    #         'use_sim_time': use_sim_time,
-    #         'frame_prefix' : ns_r1
-    #         }.items()
-    # )
-
-    # spawn_turtlebot1_cmd = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         os.path.join(launch_file_dir, 'spawn_tb3.launch.py')
-    #     ),
-    #     launch_arguments={
-    #         'x_pose': x_pose_r1,
-    #         'y_pose': y_pose_r1,
-    #         'namespace' :ns_r1
-    #     }.items()
-    # )
-
-
+    
+    robot2_spawn_cmd = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(launch_file_dir, 'spawn_tb3.launch.py')
+            ),
+            launch_arguments={
+                'x_pose': x_pose_r2,
+                'y_pose': y_pose_r2,
+                'namespace': ns_r2
+            }.items()
+        )
+    
+    robot3_spawn_cmd = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(launch_file_dir, 'spawn_tb3.launch.py')
+            ),
+            launch_arguments={
+                'x_pose': x_pose_r3,
+                'y_pose': y_pose_r3,
+                'namespace': ns_r3
+            }.items()
+        )
 
     ld = LaunchDescription()
 
@@ -100,6 +90,7 @@ def generate_launch_description():
     ld.add_action(gazebo_cmd)
     # ld.add_action(spawn_turtlebot1_cmd)
     # ld.add_action(robot_state_publisher1_cmd)
-    ld.add_action(robot1_group)
-
+    ld.add_action(robot1_spawn_cmd)
+    ld.add_action(robot2_spawn_cmd)
+    ld.add_action(robot3_spawn_cmd)
     return ld
