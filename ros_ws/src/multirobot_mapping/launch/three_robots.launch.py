@@ -6,8 +6,6 @@ from launch.actions import AppendEnvironmentVariable
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.actions import GroupAction
-from launch_ros.actions import PushRosNamespace
 
 from launch_ros.actions import Node
 
@@ -17,6 +15,7 @@ def generate_launch_description():
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
     x_pose_r1 = LaunchConfiguration('x_pose_r1', default='2.0')
     y_pose_r1 = LaunchConfiguration('y_pose_r1', default='0.0')
     ns_r1 = LaunchConfiguration('ns_r1', default='robot1')
@@ -48,7 +47,6 @@ def generate_launch_description():
                 get_package_share_directory('turtlebot3_gazebo'),
                 'models'))
 
-
                                 # ROBOT1
     robot1_spawn_cmd = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -61,6 +59,15 @@ def generate_launch_description():
             }.items()
         )
     
+    robot1_tf_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='world_to_robot1_odom',
+        arguments=[x_pose_r1, y_pose_r1, '0.01', '0.0', '0.0', '0.0', 'world', 'robot1/odom']
+    )
+    
+
+                                # ROBOT2    
     robot2_spawn_cmd = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(launch_file_dir, 'spawn_tb3.launch.py')
@@ -72,6 +79,14 @@ def generate_launch_description():
             }.items()
         )
     
+    robot2_tf_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='world_to_robot2_odom',
+        arguments=[x_pose_r2, y_pose_r2, '0.01', '0.0', '0.0', '0.0', 'world', 'robot2/odom']
+    )
+    
+                                # ROBOT3    
     robot3_spawn_cmd = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(launch_file_dir, 'spawn_tb3.launch.py')
@@ -82,6 +97,13 @@ def generate_launch_description():
                 'namespace': ns_r3
             }.items()
         )
+    
+    robot3_tf_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='world_to_robot3_odom',
+        arguments=[x_pose_r3, y_pose_r3, '0.01', '0.0', '0.0', '0.0', 'world', 'robot3/odom']
+    )
 
     ld = LaunchDescription()
 
@@ -91,6 +113,9 @@ def generate_launch_description():
     # ld.add_action(spawn_turtlebot1_cmd)
     # ld.add_action(robot_state_publisher1_cmd)
     ld.add_action(robot1_spawn_cmd)
+    ld.add_action(robot1_tf_publisher)
     ld.add_action(robot2_spawn_cmd)
+    ld.add_action(robot2_tf_publisher)
     ld.add_action(robot3_spawn_cmd)
+    ld.add_action(robot3_tf_publisher)
     return ld

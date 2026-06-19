@@ -91,7 +91,7 @@ def generate_launch_description():
                 }.items()
             )
         ])
-
+        
         gazebo_ros_bridge = Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',

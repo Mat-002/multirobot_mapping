@@ -73,9 +73,9 @@ def load_sdf_with_namespace(model_path, namespace):
         '<topic>joint_states</topic>': f'<topic>{namespace}/joint_states</topic>',
         '<topic>imu</topic>': f'<topic>{namespace}/imu</topic>',
         '<topic>scan</topic>': f'<topic>{namespace}/scan</topic>',
-        '<topic>stereo_camera</topic>': f'<topic>{namespace}/stereo_camera</topic>',    #MODIFICATO
-        '<camera_info_topic>stereo_camera/camera_info</camera_info_topic>': f'<camera_info_topic>{namespace}/stereo_camera/camera_info</camera_info_topic>',    #MODIFICATO
-        # --- AGGIUNGI QUESTE RIGHE PER CORREGGERE I FRAME DEL PLUGIN DIFF-DRIVE ---
+        '<topic>stereo_camera</topic>': f'<topic>{namespace}/stereo_camera</topic>',
+        '<camera_info_topic>stereo_camera/camera_info</camera_info_topic>': f'<camera_info_topic>{namespace}/stereo_camera/camera_info</camera_info_topic>',
+
         '<frame_id>odom</frame_id>': f'<frame_id>{namespace}/odom</frame_id>',
         '<child_frame_id>base_footprint</child_frame_id>': f'<child_frame_id>{namespace}/base_footprint</child_frame_id>',
         '<gz_frame_id>camera_rgb_frame</gz_frame_id>': f'<gz_frame_id>{namespace}/camera_rgb_frame</gz_frame_id>'
