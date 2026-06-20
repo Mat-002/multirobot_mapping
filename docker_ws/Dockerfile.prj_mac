@@ -1,0 +1,41 @@
+FROM ros:jazzy
+ 
+ENV DEBIAN_FRONTEND=noninteractive
+ 
+RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+RUN echo 'Acquire::Check-Date "false";' >> /etc/apt/apt.conf.d/99no-check-valid
+ 
+# Core tools
+RUN apt-get update -y && apt-get install -y wget git vim cmake python3-pip python3-colcon-common-extensions python3-rosdep
+ 
+# Nav2
+RUN apt-get update -y && apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup
+ 
+# TurtleBot3
+RUN apt-get update -y && apt-get install -y ros-jazzy-turtlebot3 ros-jazzy-turtlebot3-simulations ros-jazzy-turtlebot3-gazebo
+ 
+# Gazebo + ROS bridge
+RUN apt-get update -y && apt-get install -y ros-jazzy-ros-gz ros-jazzy-ros-gz-bridge ros-jazzy-gz-sim-vendor
+ 
+# SLAM + RViz2
+RUN apt-get update -y && apt-get install -y ros-jazzy-slam-toolbox ros-jazzy-rviz2
+ 
+# rosdep
+RUN rosdep init || true && rosdep update
+
+# Workspace
+RUN mkdir -p /ros_ws/src
+WORKDIR /ros_ws
+ 
+# Bashrc
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
+RUN echo "source /ros_ws/install/setup.bash 2>/dev/null || true" >> /root/.bashrc
+RUN echo "export ROS_DOMAIN_ID=0" >> /root/.bashrc
+RUN echo "export TURTLEBOT3_MODEL=waffle" >> /root/.bashrc
+RUN echo "export GZ_SIM_RESOURCE_PATH=/ros_ws/src" >> /root/.bashrc
+ 
+# Entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
