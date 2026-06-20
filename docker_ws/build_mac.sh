@@ -1,7 +1,7 @@
 #!/bin/bash
 
-IMAGE_NAME="prj"
-IMAGE_TAG="jazzy"
+IMAGE_NAME="ros"
+IMAGE_TAG="prj"
  
 echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
  

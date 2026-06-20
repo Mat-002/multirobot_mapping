@@ -1,7 +1,7 @@
 #!/bin/bash
  
-IMAGE_NAME="prj"
-IMAGE_TAG="jazzy"
+IMAGE_NAME="ros"
+IMAGE_TAG="prj"
 CONTAINER_NAME="multirobot"
  
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -22,7 +22,7 @@ docker run -it \
   -e DISPLAY=$DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -e ROS_DOMAIN_ID=0 \
-  -e TURTLEBOT3_MODEL=burger \
+  -e TURTLEBOT3_MODEL=waffle \
   -v "${PROJECT_ROOT}/ros_ws/:/root/ros_workspace" \
   --privileged \
   "${IMAGE_NAME}:${IMAGE_TAG}"
